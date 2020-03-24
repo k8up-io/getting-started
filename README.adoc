@@ -3,6 +3,9 @@
 :sectlinks:
 :imagesdir: assets/images
 :experimental:
+:icons: font
+:nofooter:
+:hide-uri-scheme:
 
 = Tutorial: Backing up Kubernetes Clusters with K8up
 
