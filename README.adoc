@@ -19,9 +19,9 @@ K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator dis
 
 * Backup all PVCs marked as `ReadWriteMany`.
 * Perform individual, on-demand backups.
-* Schedule backups to be executed in a regular basis.
-* Schedule archive tasks, usually executed in longer intervals.
-* Check the backup repository for its health.
+* Schedule backups to be executed on a regular basis.
+* Schedule backup archivals (e.g. to AWS Glacier), usually executed in longer intervals.
+* Check the backup repository for its integrity.
 * Prune old backups from a repository.
 * Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in any backend supported by it: SFTP, Amazon S3, Azure Blob Storage, Minio, Google Cloud Storage, etc.
 
@@ -32,7 +32,7 @@ image::logo.png[width=200]
 
 == Introduction
 
-This tutorial will show you how to backup a small https://github.com/kubernetes/minikube[Minikube] cluster running in your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
+This tutorial will show you how to backup a small https://github.com/kubernetes/minikube[Minikube] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
 
 === Requirements
 
