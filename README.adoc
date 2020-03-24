@@ -194,6 +194,7 @@ K8up runs restic in the background to perform its job. It will automatically bac
 
 Just like any other Kubernetes object, K8up uses YAML files to describe every single action: backups, restores, archival, etc. The most important part of the YAML files used by K8up is the `backend` object:
 
+[source,yaml]
 ....
 backend:
   repoPasswordSecretRef:
@@ -231,6 +232,7 @@ There are many ways to restore restic backups, for example locally (useful for d
 
 To restore using restic, set these variables (in a Unix-based system; for Windows, the commands are different):
 
+[source,bash]
 ....
 export KUBECONFIG=""
 export RESTIC_REPOSITORY=s3:$(minikube service minio --url)/backups/
@@ -258,6 +260,7 @@ K8up is able to restore data directly on specified PVCs. This requires some manu
 * Make sure the `restoreMethod:folder:claimName:` value corresponds to the `Paths` value of the snapshot you want to restore.
 * Replace the `snapshot` key with the long ID you just found:
 +
+[source,yaml]
 ....
 apiVersion: backup.appuio.ch/v1alpha1
 kind: Restore
@@ -284,6 +287,7 @@ NOTE: The operations of this step can be executed in one shot executing the `scr
 
 The restore job puts back all values in the `volumeMounts:mountPath:` path specified at the moment of creation; for example, in the case of WordPress:
 
+[source,yaml]
 ....
 volumeMounts:
 - name: wordpress-persistent-storage
@@ -334,6 +338,7 @@ NOTE: The operations of this step can be executed in one shot executing the `scr
 
 Instead of performing backups manually, you can also set a schedule for backups. This requires specifying the schedule in `cron` format.
 
+[source,yaml]
 ....
 backup:
   schedule: '*/2 * * * *'    # backup every 2 minutes
@@ -345,6 +350,7 @@ TIP: Use https://crontab.guru/[crontab.guru] to help you set up complex schedule
 
 The schedule can also specify `archive` and `check` tasks to be executed regularly.
 
+[source,yaml]
 ....
 archive:
   schedule: '0 0 1 * *'       # archive every week
