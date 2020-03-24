@@ -103,7 +103,7 @@ NOTE: The operations of this step can be executed in one shot executing the `scr
 +
 IMPORTANT: If the message "Error establishing a database connection" appears when launching WordPress, just delete the WordPress pod and try again. This usually happens if the WordPress pod starts before the MariaDB pod and can't find the database server.
 +
-.Wordpress showing a database error after starting
+.WordPress showing a database error after starting
 image::wordpress-db-error.png[]
 +
 TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:[:], write `pods` at the prompt and hit kbd:[Enter]), selecting the pod to delete with the arrow keys, and hitting the kbd:[CTRL+D] key shortcut.
@@ -321,6 +321,9 @@ In the case of the MariaDB pod, the application must be restarted after restorin
 . Delete the MariaDB pod, and a new one will be immediately created according to the deployment: `kubectl delete pod mariadb-56cd59d499-jrkr7`
 
 Now refresh your WordPress browser window and you should see the previous state of the WordPress installation restored as expected!
+
+.WordPress website restored
+image::wordpress-restored.png[]
 
 [[step_6]]
 === Cleaning up the backup pods
