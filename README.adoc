@@ -24,7 +24,7 @@ K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator dis
 * Perform "Application Aware" backups, containing the output of any tool capable of writing to `stdout`.
 * Check the backup repository for its integrity.
 * Prune old backups from a repository.
-* Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in any backend supported by it: SFTP, Amazon S3, Azure Blob Storage, Minio, Google Cloud Storage, etc.
+* Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in Amazon S3 buckets, and Minio (used we'll see in this tutorial.)
 
 K8up is written in https://golang.org/[Go] and is an open source project https://github.com/vshn/k8up[hosted in GitHub].
 
