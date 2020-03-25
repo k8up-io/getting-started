@@ -21,7 +21,7 @@ K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator dis
 * Perform individual, on-demand backups.
 * Schedule backups to be executed on a regular basis.
 * Schedule archivals (for example to AWS Glacier), usually executed in longer intervals.
-* Perform "Application Aware" backups, containing the output of any tool capable of writing to stdout.
+* Perform "Application Aware" backups, containing the output of any tool capable of writing to `stdout`.
 * Check the backup repository for its integrity.
 * Prune old backups from a repository.
 * Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in any backend supported by it: SFTP, Amazon S3, Azure Blob Storage, Minio, Google Cloud Storage, etc.
@@ -390,6 +390,6 @@ When you are done with this tutorial, just execute the `minikube stop` command t
 
 == Conclusion
 
-We hope that this walkthrough has given you a good overview of K8up and its capabilities. But it can do much more than that! We haven't talked about the archive, prune, and check commands, or about the backup of data piped via `stdin` (called "Application Aware" backups.) You can check these features in the https://k8up.io/[K8up documentation website] where they are described in detail.
+We hope that this walkthrough has given you a good overview of K8up and its capabilities. But it can do much more than that! We haven't talked about the archive, prune, and check commands, or about the backup of any data piped to `stdout` (called "Application Aware" backups.) You can check these features in the https://k8up.io/[K8up documentation website] where they are described in detail.
 
 K8up is still a work in progress, but it is already being used in production in many clusters. It is also an https://github.com/vshn/k8up[open source project], and everybody is welcome to use it freely, and even better, to contribute to it!
