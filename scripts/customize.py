@@ -14,16 +14,16 @@ parser = argparse.ArgumentParser()
 parser.add_argument("target", help='Target PVC to restore', choices=['mariadb', 'wordpress'])
 args = parser.parse_args()
 
-# Read the snapshots JSON from stdin
+# Read the snapshot JSON from stdin
 json_file = ''
 for line in sys.stdin:
     json_file += line
 
-# Look for the snapshot ID that corresponds to the 'target' argument
+# Look for the snapshot ID in the JSON
 json_data = json.loads(json_file)
 snapshot = str(json_data[0]['id'])
 
-# Read the file, replace the value and print to stdout
+# Read the YAML file, replace the `spec:snapshot:` value and print to stdout
 stream = file('k8up/restore/' + args.target + '.yaml')
 document = yaml.load(stream, Loader=yaml.FullLoader)
 document['spec']['snapshot'] = snapshot

@@ -17,10 +17,11 @@ This situation is so common that we https://vshn.ch/[VSHN] decided to tackle it 
 
 K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator distributed via a Helm chart, compatible with https://www.openshift.com/[OpenShift] and plain Kubernetes. It allows cluster operators to:
 
-* Backup all PVCs marked as `ReadWriteMany`.
+* Backup all PVCs marked as `ReadWriteMany` or with a specific label.
 * Perform individual, on-demand backups.
 * Schedule backups to be executed on a regular basis.
-* Schedule backup archivals (e.g. to AWS Glacier), usually executed in longer intervals.
+* Schedule archivals (for example to AWS Glacier), usually executed in longer intervals.
+* Perform "Application Aware" backups, containing the output of any tool capable of writing to stdout.
 * Check the backup repository for its integrity.
 * Prune old backups from a repository.
 * Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in any backend supported by it: SFTP, Amazon S3, Azure Blob Storage, Minio, Google Cloud Storage, etc.
@@ -39,7 +40,7 @@ This tutorial will show you how to backup a small https://github.com/kubernetes/
 Please install the following software packages before starting:
 
 * The `kubectl` command.
-* The https://restic.net/[restic] backup application.
+* The https://restic.net/[Restic] backup application.
 * The latest version of https://github.com/kubernetes/minikube[Minikube] (1.8.2 at the time of this writing.)
 * https://helm.sh/[Helm], required to install K8up in your cluster.
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
@@ -190,7 +191,7 @@ image::minio-browser.png[]
 
 ==== How does K8up work?
 
-K8up runs restic in the background to perform its job. It will automatically backup all PVCs in the cluster with the `ReadWriteMany` attribute.
+K8up runs Restic in the background to perform its job. It will automatically backup all PVCs in the cluster with the `ReadWriteMany` attribute.
 
 Just like any other Kubernetes object, K8up uses YAML files to describe every single action: backups, restores, archival, etc. The most important part of the YAML files used by K8up is the `backend` object:
 
@@ -213,8 +214,8 @@ backend:
 
 This object specifies two major keys:
 
-* `repoPasswordSecretRef` contains the reference to the secret that contains the `restic` password. This is used to open, read and write to the backup repository.
-* `s3` specifies the location and credentials of the storage where the `restic` backup is located. The only valid option at this moment is an AWS S3 compatible location, such as a Minio server in our case.
+* `repoPasswordSecretRef` contains the reference to the secret that contains the Restic password. This is used to open, read and write to the backup repository.
+* `s3` specifies the location and credentials of the storage where the Restic backup is located. The only valid option at this moment is an AWS S3 compatible location, such as a Minio server in our case.
 
 [[step_4]]
 === Restoring a backup
@@ -226,11 +227,11 @@ image::wordpress-defaced.png[]
 
 Oh noes! But don't worry: thanks to K8up you can bring your old blog back in a few minutes.
 
-There are many ways to restore restic backups, for example locally (useful for debugging or inspection) and remotely (on PVCs or S3 buckets, for example.)
+There are many ways to restore Restic backups, for example locally (useful for debugging or inspection) and remotely (on PVCs or S3 buckets, for example.)
 
 ==== Restoring locally
 
-To restore using restic, set these variables (in a Unix-based system; for Windows, the commands are different):
+To restore using Restic, set these variables (in a Unix-based system; for Windows, the commands are different):
 
 [source,bash]
 ....
