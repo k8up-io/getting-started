@@ -35,6 +35,8 @@ image::logo.png[width=200]
 
 This tutorial will show you how to backup a small https://github.com/kubernetes/minikube[Minikube] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
 
+NOTE: All the scripts and YAML files are available in GitHub: https://github.com/vshn/k8up-tutorial.
+
 === Requirements
 
 Please install the following software packages before starting:
