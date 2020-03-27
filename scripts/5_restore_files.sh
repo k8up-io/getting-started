@@ -11,13 +11,16 @@
 
 source scripts/environment.sh
 
-# MariaDB
+# Set Minikube context
+kubectl config use-context minikube
+
+# Restore files in MariaDB PVC
 MARIADB_POD=$(kubectl get pods | grep mariadb | awk '{print $1}')
 kubectl cp scripts/container_restore.sh "$MARIADB_POD":/var/lib/mysql
 kubectl exec "$MARIADB_POD" -- /var/lib/mysql/container_restore.sh mariadb
 kubectl delete pod "$MARIADB_POD"
 
-# Wordpress
+# Restore files in Wordpress PVC
 WORDPRESS_POD=$(kubectl get pods | grep wordpress | awk '{print $1}')
 kubectl cp scripts/container_restore.sh "$WORDPRESS_POD":/var/www/html
 kubectl exec "$WORDPRESS_POD" -- /var/www/html/container_restore.sh wordpress

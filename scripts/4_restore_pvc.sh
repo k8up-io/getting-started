@@ -7,8 +7,11 @@
 
 source scripts/environment.sh
 
-# MariaDB
+# Set Minikube context
+kubectl config use-context minikube
+
+# Restore MariaDB PVC
 restic snapshots --json --last --path /data/mariadb-pvc | python scripts/customize.py mariadb | kubectl apply -f -
 
-# WordPress
+# Restore WordPress PVC
 restic snapshots --json --last --path /data/wordpress-pvc | python scripts/customize.py wordpress | kubectl apply -f -

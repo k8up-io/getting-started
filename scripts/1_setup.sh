@@ -6,6 +6,7 @@
 echo ""
 echo "••• Launching Minikube •••"
 minikube start --memory 4096 --disk-size 60g --cpus 4
+kubectl config use-context minikube
 
 echo ""
 echo "••• Installing Secrets •••"
