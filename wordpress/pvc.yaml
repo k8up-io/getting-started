@@ -3,6 +3,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: wordpress-pvc
   annotations:
+    # k8up.syn.tools/backup: "true"
     appuio.ch/backup: "true"
   labels:
     app: wordpress
