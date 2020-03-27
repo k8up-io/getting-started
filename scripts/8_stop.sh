@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-minikube delete
+k3d delete

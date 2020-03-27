@@ -7,9 +7,6 @@
 
 source scripts/environment.sh
 
-# Set Minikube context
-kubectl config use-context minikube
-
 # Restore MariaDB PVC
 restic snapshots --json --last --path /data/mariadb-pvc | python scripts/customize.py mariadb | kubectl apply -f -
 

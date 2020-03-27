@@ -2,11 +2,13 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: wordpress-pvc
+  annotations:
+    appuio.ch/backup: "true"
   labels:
     app: wordpress
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi

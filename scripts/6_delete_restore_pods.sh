@@ -4,8 +4,8 @@
 
 source scripts/environment.sh
 
-# Set Minikube context
-kubectl config use-context minikube
+# Set kubectl context
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
 # MariaDB
 restic snapshots --json --last --path /data/mariadb-pvc | python scripts/customize.py mariadb | kubectl delete -f -

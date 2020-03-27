@@ -2,8 +2,8 @@
 
 source scripts/environment.sh
 
-# Set Minikube context
-kubectl config use-context minikube
+# Set kubectl context
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
 # Set the schedule
 kubectl apply -f k8up/schedule.yaml

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# Open browser showing Minio
-minikube service minio
+# Set kubectl context
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
-# Open browser showing WordPress
-minikube service wordpress
+echo "Wordpress: http://$(kubectl get services | grep wordpress | awk '{print $4}'):8080"
+echo "Minio: http://$(kubectl get services | grep minio | awk '{print $4}'):9000"

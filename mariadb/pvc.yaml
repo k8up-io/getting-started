@@ -4,9 +4,11 @@ metadata:
   name: mariadb-pvc
   labels:
     app: wordpress
+  annotations:
+    appuio.ch/backup: "true"
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi

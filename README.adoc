@@ -33,7 +33,7 @@ image::logo.png[width=200]
 
 == Introduction
 
-This tutorial will show you how to backup a small https://github.com/kubernetes/minikube[Minikube] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
+This tutorial will show you how to backup a small https://k3s.io/[k3s] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
 
 NOTE: All the scripts and YAML files are available in GitHub: https://github.com/vshn/k8up-tutorial.
 
@@ -43,7 +43,7 @@ Please install the following software packages before starting:
 
 * The `kubectl` command.
 * The https://restic.net/[Restic] backup application.
-* The latest version of https://github.com/kubernetes/minikube[Minikube] (1.9 at the time of this writing.)
+* The latest version of https://github.com/rancher/k3d[k3d] (1.9 at the time of this writing.)
 * https://helm.sh/[Helm], required to install K8up in your cluster.
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
 
@@ -67,10 +67,10 @@ Let's get started!
 
 NOTE: The operations of this step can be executed at once using the `scripts/1_setup.sh` script.
 
-. Start your minikube instance with a configuration slightly more powerful than the default one:
-* `minikube start --memory 4096 --disk-size 60g --cpus 4`
+. Start your k3d instance with a configuration slightly more powerful than the default one:
+* `k3d create`
 
-IMPORTANT: On some laptops, running Minikube on battery power severely undermines its performance, and pods can take really long to start. Make sure to be plugged in to power before starting this tutorial.
+IMPORTANT: On some laptops, running k3d on battery power severely undermines its performance, and pods can take really long to start. Make sure to be plugged in to power before starting this tutorial.
 
 [start=2]
 . Copy all required secrets and passwords into the cluster:
@@ -85,7 +85,7 @@ IMPORTANT: On some laptops, running Minikube on battery power severely undermine
 . Install WordPress:
 * `kubectl apply -k wordpress`
 
-. Install K8up in Minikube:
+. Install K8up:
 * `helm repo add appuio https://charts.appuio.ch`
 * `helm repo update`
 * `helm install appuio/k8up --generate-name`
@@ -103,7 +103,7 @@ The https://asciinema.org/[asciinema] movie below shows all of these steps in re
 
 NOTE: The operations of this step can be executed at once using the `scripts/2_browser.sh` script.
 
-. Open WordPress in your default browser using the `minikube service wordpress` command. You should see the WordPress installation wizard appearing on your browser window.
+. Open WordPress in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 8080. You should see the WordPress installation wizard appearing on your browser window.
 
 IMPORTANT: If the message "Error establishing a database connection" appears when launching WordPress, just delete the WordPress pod and try again. This usually happens if the WordPress pod starts before the MariaDB pod and can't find the database server.
 
@@ -116,7 +116,7 @@ TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:
 image::k9s-delete.png[]
 
 [start=2]
-. Open Minio in your default browser with the `minikube service minio` command.
+. Open Minio in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 9000.
 * You can login into minio with these credentials: access key `minio`, secret key `minio123`.
 
 ==== Setting up the new blog
@@ -240,8 +240,8 @@ To restore using Restic, set these variables (in a Unix-based system; for Window
 
 [source,bash]
 ....
-export KUBECONFIG=""
-export RESTIC_REPOSITORY=s3:$(minikube service minio --url)/backups/
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+export RESTIC_REPOSITORY=s3:http://$(kubectl get services | grep minio | awk '{print $3}'):9000/backups/
 export RESTIC_PASSWORD=p@ssw0rd
 export AWS_ACCESS_KEY_ID=minio
 export AWS_SECRET_ACCESS_KEY=minio123
@@ -406,7 +406,7 @@ TIP: Running the `watch restic snapshots` command will give you a live console w
 
 NOTE: The operations of this step can be executed at once using the `scripts/8_stop.sh` script.
 
-When you are done with this tutorial, just execute the `minikube stop` command to shut the cluster down. You can also `minikube delete` it, if you would like to get rid of it completely.
+When you are done with this tutorial, just execute the `k3d stop` command to shut the cluster down. You can also `k3d delete` it, if you would like to get rid of it completely.
 
 == Conclusion
 

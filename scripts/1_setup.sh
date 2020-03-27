@@ -1,12 +1,18 @@
 #!/usr/bin/env bash
 
-# This script rebuilds the complete minikube cluster in one shot,
+# This script rebuilds the complete k3d cluster in one shot,
 # creating a ready-to-use WordPress + MariaDB + Minio environment.
 
 echo ""
-echo "••• Launching Minikube •••"
-minikube start --memory 4096 --disk-size 60g --cpus 4
-kubectl config use-context minikube
+echo "••• Launching k3d •••"
+k3d create
+
+# Wait for startup
+sleep 50
+
+# Set kubectl context
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+kubectl cluster-info
 
 echo ""
 echo "••• Installing Secrets •••"
@@ -28,7 +34,7 @@ echo ""
 echo "••• Installing K8up •••"
 helm repo add appuio https://charts.appuio.ch
 helm repo update
-helm install appuio/k8up --generate-name
+helm install appuio/k8up --generate-name --version 0.2.5
 
 echo ""
 echo "••• Watch pods •••"
