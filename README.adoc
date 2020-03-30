@@ -46,6 +46,7 @@ Please install the following software packages before starting:
 * The latest version of https://github.com/rancher/k3d[k3d] (1.9 at the time of this writing.)
 * https://helm.sh/[Helm], required to install K8up in your cluster.
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
+* https://stedolan.github.io/jq/[jq] a lightweight and flexible command-line JSON processor
 
 == Tutorial
 
@@ -266,7 +267,7 @@ $ restic snapshots XXXXXXXX --json | jq -r '.[0].id'
 ....
 
 [start=2]
-. Use that long ID in your restore YAML file `k8up/restore-pvc-wordpress.yaml`:
+. Use that long ID in your restore YAML file `k8up/restore/wordpress.yaml`:
 * Make sure the `restoreMethod:folder:claimName:` value corresponds to the `Paths` value of the snapshot you want to restore.
 * Replace the `snapshot` key with the long ID you just found:
 
