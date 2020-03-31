@@ -4,11 +4,12 @@ metadata:
   name: mariadb-pvc
   labels:
     app: wordpress
-  annotations:
-    k8up.syn.tools/backup: "true"
 spec:
+  # https://github.com/rancher/local-path-provisioner/issues/70
+  # Rancher's local path provisioner only supports the RWO access mode
   accessModes:
     - ReadWriteOnce
+  storageClassName: local-path
   resources:
     requests:
       storage: 10Gi
