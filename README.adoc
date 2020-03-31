@@ -41,6 +41,7 @@ NOTE: All the scripts and YAML files are available in GitHub: https://github.com
 
 Please install the following software packages before starting:
 
+* Make sure PyYAML 5.1 or later is installed: `pip install PyYAML==5.1`
 * The `kubectl` command.
 * The https://restic.net/[Restic] backup application.
 * The latest version of https://github.com/rancher/k3d[k3d] (1.9 at the time of this writing.)
