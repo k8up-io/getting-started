@@ -51,7 +51,7 @@ Please install the following software packages before starting:
 
 == Tutorial
 
-It consists of seven steps to be executed in sequence:
+It consists of six steps to be executed in sequence:
 
 . <<step_1, Setting up the cluster>>.
 . <<step_2, Creating a blog>>.
