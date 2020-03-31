@@ -7,8 +7,8 @@
 
 source scripts/environment.sh
 
-# Set Minikube context
-kubectl config use-context minikube
+# Set kubectl context
+export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
 # Restore WordPress PVC
 restic snapshots --json --last --path /data/wordpress-pvc | python scripts/customize.py wordpress | kubectl apply -f -

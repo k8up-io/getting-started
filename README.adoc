@@ -57,9 +57,8 @@ It consists of seven steps to be executed in sequence:
 . <<step_2, Creating a blog>>.
 . <<step_3, Backing up the blog>>.
 . <<step_4, Restoring the contents of the backup>>.
-. <<step_5, Deleting the backup pods>>.
-. <<step_6, Scheduling regular backups>>.
-. <<step_7, Cleaning up>>.
+. <<step_5, Scheduling regular backups>>.
+. <<step_6, Cleaning up>>.
 
 Let's get started!
 
@@ -351,18 +350,9 @@ Now refresh your WordPress browser window and you should see the previous state 
 image::wordpress-restored.png[]
 
 [[step_5]]
-=== Cleaning up the backup pods
-
-NOTE: The operations of this step can be executed at once using the `scripts/5_delete_restore_pods.sh` script.
-
-Whenever K8up performs a backup, it creates a job pod; the one we created previously can be manually deleted using the command:
-
-`kubectl delete -f k8up/restore/wordpress.yaml`
-
-[[step_6]]
 === Scheduling regular backups
 
-NOTE: The operations of this step can be executed at once using the `scripts/6_schedule.sh` script.
+NOTE: The operations of this step can be executed at once using the `scripts/5_schedule.sh` script.
 
 Instead of performing backups manually, you can also set a schedule for backups. This requires specifying the schedule in `cron` format.
 
@@ -403,10 +393,10 @@ Wait for at most 2 minutes, and run the `restic snapshots` to see more backups p
 
 TIP: Running the `watch restic snapshots` command will give you a live console with your current snapshots on a terminal window, updated every 2 seconds.
 
-[[step_7]]
+[[step_6]]
 === Cleaning up the cluster
 
-NOTE: The operations of this step can be executed at once using the `scripts/7_stop.sh` script.
+NOTE: The operations of this step can be executed at once using the `scripts/6_stop.sh` script.
 
 When you are done with this tutorial, just execute the `k3d stop` command to shut the cluster down. You can also `k3d delete` it, if you would like to get rid of it completely.
 
