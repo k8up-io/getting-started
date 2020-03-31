@@ -49,6 +49,8 @@ Please install the following software packages before starting:
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
 * https://stedolan.github.io/jq/[jq], a lightweight and flexible command-line JSON processor.
 
+NOTE: If you prefer to use https://k3s.io/[k3s] instead of Minikube, just change to the https://github.com/vshn/k8up-tutorial/tree/k3d[k3d branch] in the tutorial repository.
+
 == Tutorial
 
 It consists of six steps to be executed in sequence:
