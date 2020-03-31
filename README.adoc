@@ -17,7 +17,7 @@ This situation is so common that we https://vshn.ch/[VSHN] decided to tackle it 
 
 K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator distributed via a Helm chart, compatible with https://www.openshift.com/[OpenShift] and plain Kubernetes. It allows cluster operators to:
 
-* Backup all PVCs marked as `ReadWriteMany` or with a specific label.
+* Backup all PVCs marked as `ReadWriteMany` or with a specific annotation.
 * Perform individual, on-demand backups.
 * Schedule backups to be executed on a regular basis.
 * Schedule archivals (for example to AWS Glacier), usually executed in longer intervals.
@@ -47,20 +47,19 @@ Please install the following software packages before starting:
 * The latest version of https://github.com/rancher/k3d[k3d] (1.9 at the time of this writing.)
 * https://helm.sh/[Helm], required to install K8up in your cluster.
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
-* https://stedolan.github.io/jq/[jq] a lightweight and flexible command-line JSON processor
+* https://stedolan.github.io/jq/[jq], a lightweight and flexible command-line JSON processor.
 
 == Tutorial
 
-It consists of 8 steps to be executed in sequence:
+It consists of seven steps to be executed in sequence:
 
 . <<step_1, Setting up the cluster>>.
 . <<step_2, Creating a blog>>.
 . <<step_3, Backing up the blog>>.
 . <<step_4, Restoring the contents of the backup>>.
-. <<step_5, Moving files to their actual location>>.
-. <<step_6, Deleting the backup pods>>.
-. <<step_7, Scheduling regular backups>>.
-. <<step_8, Cleaning up>>.
+. <<step_5, Deleting the backup pods>>.
+. <<step_6, Scheduling regular backups>>.
+. <<step_7, Cleaning up>>.
 
 Let's get started!
 
@@ -198,7 +197,30 @@ image::minio-browser.png[]
 
 ==== How does K8up work?
 
-K8up runs Restic in the background to perform its job. It will automatically backup all PVCs in the cluster with the `ReadWriteMany` attribute.
+K8up runs Restic in the background to perform its job. It will automatically backup the following:
+
+. All PVCs in the cluster with the `ReadWriteMany` attribute.
+. All PVCs in the cluster with the `k8up.syn.tools/backup: "true"` annotation.
+
+The PVC definition below shows how to add the required annotation for K8up to do its job.
+
+[source,yaml]
+....
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wordpress-pvc
+  labels:
+    app: wordpress
+  annotations:
+    k8up.syn.tools/backup: "true"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+....
 
 Just like any other Kubernetes object, K8up uses YAML files to describe every single action: backups, restores, archival, etc. The most important part of the YAML files used by K8up is the `backend` object:
 
@@ -227,6 +249,8 @@ This object specifies two major keys:
 [[step_4]]
 === Restoring a backup
 
+NOTE: The operations of this step can be executed at once using the `scripts/4_restore.sh` script.
+
 Let's pretend now that an attacker has gained access to your blog: we will remove all blog posts and images from the WordPress installation and empty the trash.
 
 .Defaced WordPress site!
@@ -253,9 +277,7 @@ NOTE: You can create these variables simply running `source scripts/environment.
 
 With these variables in your environment, run the command `restic snapshots` to see the list of backups, and `restic restore XXXXX --target ~/restore` to trigger a restore, where XXXXX is one of the IDs appearing in the results of the snapshots command.
 
-==== Restoring on a PVC
-
-NOTE: The operations of this step can be executed at once using the `scripts/4_restore_pvc.sh` script.
+==== Restoring the WordPress PVC
 
 K8up is able to restore data directly on specified PVCs. This requires some manual steps.
 
@@ -293,31 +315,54 @@ spec:
 
 TIP: If you use the `kubectl get pods --sort-by=.metadata.creationTimestamp` command to order the pods in descending age order; at the bottom of the list you will see the restore job pod.
 
-[[step_5]]
-=== Restart the MariaDB pod
+==== Restoring the MariaDB pod
 
-NOTE: The operations of this step can be executed at once using the `scripts/5_restart_mariadb.sh` script.
+In the case of the MariaDB pod, we have used a `backupcommand` annotation. This means that we have to "pipe" the contents of the backup into the `mysql` command of the pod, so that the information can be restored.
 
-In the case of the MariaDB pod, the application must be restarted after restoring the files. Delete the MariaDB pod, and a new one will be immediately created according to the deployment: `kubectl delete pod mariadb-56cd59d499-jrkr7`
+Follow these steps to restore the database:
+
+. Retrieve the ID of the MariaDB snapshot:
++
+`restic snapshots --json --last --path /default-mariadb | jq -r '.[0].id'`
+
+. Save the contents of the backup locally:
++
+`restic dump SNAPSHOT_ID /default-mariadb > backup.sql`
+
+. Get the name of the MariaDB pod:
++
+`kubectl get pods | grep mariadb | awk '{print $1}'`
+
+. Copy the backup into the MariaDB pod:
++
+`kubectl cp backup.sql MARIADB_POD:/`
+
+. Get a shell to the MariaDB pod:
++
+`kubectl exec -it MARIADB_POD -- /bin/bash`
+
+. Execute the `mysql` command in the MariaDB pod to restore the database:
++
+`mysql -uroot -p"${MARIADB_ROOT_PASSWORD}" < /backup.sql`
 
 Now refresh your WordPress browser window and you should see the previous state of the WordPress installation restored, working and looking as expected!
 
 .WordPress website restored
 image::wordpress-restored.png[]
 
-[[step_6]]
+[[step_5]]
 === Cleaning up the backup pods
 
-NOTE: The operations of this step can be executed at once using the `scripts/6_delete_restore_pods.sh` script.
+NOTE: The operations of this step can be executed at once using the `scripts/5_delete_restore_pods.sh` script.
 
 Whenever K8up performs a backup, it creates a job pod; the one we created previously can be manually deleted using the command:
 
 `kubectl delete -f k8up/restore/wordpress.yaml`
 
-[[step_7]]
+[[step_6]]
 === Scheduling regular backups
 
-NOTE: The operations of this step can be executed at once using the `scripts/7_schedule.sh` script.
+NOTE: The operations of this step can be executed at once using the `scripts/6_schedule.sh` script.
 
 Instead of performing backups manually, you can also set a schedule for backups. This requires specifying the schedule in `cron` format.
 
@@ -358,10 +403,10 @@ Wait for at most 2 minutes, and run the `restic snapshots` to see more backups p
 
 TIP: Running the `watch restic snapshots` command will give you a live console with your current snapshots on a terminal window, updated every 2 seconds.
 
-[[step_8]]
+[[step_7]]
 === Cleaning up the cluster
 
-NOTE: The operations of this step can be executed at once using the `scripts/8_stop.sh` script.
+NOTE: The operations of this step can be executed at once using the `scripts/7_stop.sh` script.
 
 When you are done with this tutorial, just execute the `k3d stop` command to shut the cluster down. You can also `k3d delete` it, if you would like to get rid of it completely.
 
