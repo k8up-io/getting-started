@@ -69,7 +69,7 @@ Let's get started!
 
 NOTE: The operations of this step can be executed at once using the `scripts/1_setup.sh` script.
 
-. Start your k3d instance with a configuration slightly more powerful than the default one:
+. Start your k3d instance:
 * `k3d create`
 
 IMPORTANT: On some laptops, running k3d on battery power severely undermines its performance, and pods can take really long to start. Make sure to be plugged in to power before starting this tutorial.
