@@ -4,8 +4,8 @@
 # creating a ready-to-use WordPress + MariaDB + Minio environment.
 
 echo ""
-echo "••• Launching k3d •••"
-k3d create
+echo "••• Launching k3d, or restart if already created •••"
+k3d create || k3d start
 
 # Wait for startup
 sleep 50

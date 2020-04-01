@@ -39,7 +39,7 @@ NOTE: All the scripts and YAML files are available in GitHub: https://github.com
 
 === Requirements
 
-Please install the following software packages before starting:
+This tutorial has been tested in both Linux (Ubuntu 18.04) and macOS (10.15 Catalina.) Please install the following software packages before starting:
 
 * Make sure PyYAML 5.1 or later is installed: `pip install PyYAML==5.1`
 * The `kubectl` command.
