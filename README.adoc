@@ -235,10 +235,10 @@ backend:
     endpoint: http://minio:9000
     bucket: backups
     accessKeyIDSecretRef:
-      name: backup-credentials
+      name: minio-credentials
       key: username
     secretAccessKeySecretRef:
-      name: backup-credentials
+      name: minio-credentials
       key: password
 ....
 
@@ -379,10 +379,10 @@ archive:
       endpoint: http://minio:9000
       bucket: archive
       accessKeyIDSecretRef:
-        name: backup-credentials
+        name: minio-credentials
         key: username
       secretAccessKeySecretRef:
-        name: backup-credentials
+        name: minio-credentials
         key: password
 check:
   schedule: '0 1 * * 1'      # monthly check

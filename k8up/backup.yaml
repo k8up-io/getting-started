@@ -13,8 +13,8 @@ spec:
       endpoint: http://minio:9000
       bucket: backups
       accessKeyIDSecretRef:
-        name: backup-credentials
+        name: minio-credentials
         key: username
       secretAccessKeySecretRef:
-        name: backup-credentials
+        name: minio-credentials
         key: password
