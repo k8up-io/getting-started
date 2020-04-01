@@ -154,41 +154,45 @@ Running the `logs` command on a backup pod brings the following information:
 
 ....
 $ kubectl logs backupjob-1564752600-6rcb4
+No repository available, initialising...
+created restic repository edaea22006 at s3:http://minio:9000/backups
+
+Please note that knowledge of your password is required to access
+the repository. Losing your password means that your data is
+irrecoverably lost.
 Removing locks...
 created new cache in /root/.cache/restic
 successfully removed locks
 Listing all pods with annotation appuio.ch/backupcommand in namespace default
+Adding default/mariadb-9588f5d7d-xmbc7 to backuplist
+Listing snapshots
+snapshots command:
+0 Snapshots
+backing up via mariadb stdin...
+Backup command: /bin/bash, -c, mysqldump -uroot -p"${MARIADB_ROOT_PASSWORD}" --all-databases
+done: 0.00%
+backup finished! new files: 1 changed files: 0 bytes added: 4184711
+Listing snapshots
+snapshots command:
+1 Snapshots
+sending webhook Listing snapshots
+snapshots command:
+1 Snapshots
 backing up...
-Starting backup for folder mariadb-pvc
-
-Files:           0 new,     0 changed,   161 unmodified
-Dirs:            0 new,     1 changed,     0 unmodified
-Added to the repo: 356 B
-
-processed 161 files, 181.309 MiB in 0:00
-snapshot 883445cf saved
-Get snapshots for backup metrics
-Listing snapshots, timeout: 0
-snapshots command:
-11 Snapshots
 Starting backup for folder wordpress-pvc
-
-Files:           0 new,     0 changed,  1847 unmodified
-Dirs:            0 new,     1 changed,     0 unmodified
-Added to the repo: 356 B
-
-processed 1847 files, 41.200 MiB in 0:00
-snapshot 1e6f350a saved
-Get snapshots for backup metrics
-Listing snapshots, timeout: 0
+done: 0.00%
+backup finished! new files: 1932 changed files: 0 bytes added: 44716176
+Listing snapshots
 snapshots command:
-12 Snapshots
-Listing snapshots, timeout: 0
+2 Snapshots
+sending webhook Listing snapshots
 snapshots command:
-12 Snapshots
+2 Snapshots
 Removing locks...
-Sending webhooks to : Could not send webhook: Post : unsupported protocol scheme "" http status code: http status unavailable
-Sending webhooks to : Could not send webhook: Post : unsupported protocol scheme "" http status code: http status unavailable
+successfully removed locks
+Listing snapshots
+snapshots command:
+2 Snapshots
 ....
 
 If you look at the Minio browser window, there should be now a set of folders that appeared out of nowhere. That's your backup in Restic format!
