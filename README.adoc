@@ -6,6 +6,7 @@
 :icons: font
 :nofooter:
 :hide-uri-scheme:
+:toc: left
 
 = Tutorial: Backing up Kubernetes Clusters with K8up
 
