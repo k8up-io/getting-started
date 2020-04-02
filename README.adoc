@@ -101,6 +101,11 @@ IMPORTANT: On some laptops, running k3d on battery power severely undermines its
 
 After finishing all these steps, check that everything is running; the easiest way is to launch `k9s` and leave it running in its own terminal window, and of course you can use the usual `kubectl get pods`.
 
+TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:[:], write `pods` at the prompt and hit kbd:[Enter]), selecting the pod to delete with the arrow keys, and hitting the kbd:[CTRL+D] key shortcut.
+
+.Deleting a pod with k9s
+image::k9s-delete.png[]
+
 The https://asciinema.org/[asciinema] movie below shows all of these steps in real time.
 
 ++++
@@ -114,12 +119,6 @@ NOTE: The operations of this step can be executed at once using the `scripts/2_b
 
 . Open WordPress in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 8080. You should see the WordPress installation wizard appearing on your browser window.
 
-TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:[:], write `pods` at the prompt and hit kbd:[Enter]), selecting the pod to delete with the arrow keys, and hitting the kbd:[CTRL+D] key shortcut.
-
-.Deleting a pod with k9s
-image::k9s-delete.png[]
-
-[start=2]
 . Open Minio in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 9000.
 * You can login into minio with these credentials: access key `minio`, secret key `minio123`.
 
