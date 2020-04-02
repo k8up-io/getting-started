@@ -11,7 +11,8 @@ source scripts/environment.sh
 export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
 
 # Restore WordPress PVC
-restic snapshots --json --last --path /data/wordpress-pvc | python scripts/customize.py wordpress | kubectl apply -f -
+SNAPSHOT_ID=$(restic snapshots --json --last --path /data/wordpress-pvc | jq -r '.[0].id')
+scripts/customize.py wordpress "${SNAPSHOT_ID}" | kubectl apply -f -
 
 # Read SQL data from Restic into file
 SNAPSHOT_ID=$(restic snapshots --json --last --path /default-mariadb | jq -r '.[0].id')
