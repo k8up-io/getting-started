@@ -22,6 +22,22 @@ spec:
       containers:
       - image: mariadb/server:10.3
         name: mariadb
+        readinessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 5
+          exec:
+            command:
+            - "/bin/sh"
+            - "-i"
+            - "-c"
+            - mysql -h 127.0.0.1 -uroot -p"${MARIADB_ROOT_PASSWORD}" -D mysql -e 'SELECT 1'
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+        livenessProbe:
+          timeoutSeconds: 1
+          initialDelaySeconds: 30
+          tcpSocket:
+            port: 3306
         env:
         - name: MARIADB_ROOT_PASSWORD
           valueFrom:

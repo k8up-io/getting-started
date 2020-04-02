@@ -114,11 +114,6 @@ NOTE: The operations of this step can be executed at once using the `scripts/2_b
 
 . Open WordPress in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 8080. You should see the WordPress installation wizard appearing on your browser window.
 
-IMPORTANT: If the message "Error establishing a database connection" appears when launching WordPress, just delete the WordPress pod and try again. This usually happens if the WordPress pod starts before the MariaDB pod and can't find the database server.
-
-.WordPress showing a database error after starting
-image::wordpress-db-error.png[]
-
 TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:[:], write `pods` at the prompt and hit kbd:[Enter]), selecting the pod to delete with the arrow keys, and hitting the kbd:[CTRL+D] key shortcut.
 
 .Deleting a pod with k9s
