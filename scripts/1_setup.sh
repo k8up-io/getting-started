@@ -8,7 +8,7 @@ echo "••• Launching k3d, or restart if already created •••"
 k3d create || k3d start
 
 # Wait for startup
-sleep 50
+sleep 10
 
 # Set kubectl context
 export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
