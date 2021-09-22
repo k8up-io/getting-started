@@ -263,9 +263,6 @@ Follow these steps to restore the database:
 
 Now refresh your WordPress browser window and you should see the previous state of the WordPress installation restored, working and looking as expected!
 
-.WordPress website restored
-image::wordpress-restored.png[]
-
 [[step_5]]
 === Scheduling regular backups
 
