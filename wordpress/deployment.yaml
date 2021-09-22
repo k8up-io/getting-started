@@ -18,7 +18,7 @@ spec:
         tier: frontend
     spec:
       containers:
-      - image: wordpress:5.4-apache
+      - image: wordpress:5.6-apache
         name: wordpress
         readinessProbe:
           failureThreshold: 3

@@ -23,8 +23,6 @@ spec:
       - image: mariadb/server:10.3
         name: mariadb
         readinessProbe:
-          timeoutSeconds: 1
-          initialDelaySeconds: 5
           exec:
             command:
             - "/bin/sh"

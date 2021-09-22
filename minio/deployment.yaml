@@ -22,32 +22,23 @@ spec:
         volumeMounts:
         - name: data
           mountPath: "/data"
-        image: minio/minio
+        image: quay.io/minio/minio:RELEASE.2021-09-18T18-09-59Z.fips
         args:
         - server
+        - "--console-address"
+        - ":9001"
         - /data
         env:
-        - name: MINIO_ACCESS_KEY
+        - name: MINIO_ROOT_USER
           valueFrom:
             secretKeyRef:
               name: minio-credentials
               key: username
-        - name: MINIO_SECRET_KEY
+        - name: MINIO_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
               name: minio-credentials
               key: password
         ports:
         - containerPort: 9000
-        readinessProbe:
-          httpGet:
-            path: /minio/health/ready
-            port: 9000
-          initialDelaySeconds: 120
-          periodSeconds: 20
-        livenessProbe:
-          httpGet:
-            path: /minio/health/live
-            port: 9000
-          initialDelaySeconds: 120
-          periodSeconds: 20
+        - containerPort: 9001

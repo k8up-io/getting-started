@@ -8,14 +8,14 @@
 source scripts/environment.sh
 
 # Set kubectl context
-export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
+export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
 
 # Restore WordPress PVC
-SNAPSHOT_ID=$(restic snapshots --json --last --path /data/wordpress-pvc | jq -r '.[0].id')
-scripts/customize.py wordpress "${SNAPSHOT_ID}" | kubectl apply -f -
+# By default, the YAML file references the latest snapshot
+kubectl apply -f k8up/restore-wordpress.yaml
 
 # Read SQL data from Restic into file
-SNAPSHOT_ID=$(restic snapshots --json --last --path /default-mariadb | jq -r '.[0].id')
+SNAPSHOT_ID=$(restic snapshots --json --latest 1 --path /default-mariadb | jq -r '.[0].id')
 restic dump "${SNAPSHOT_ID}" /default-mariadb > backup.sql
 
 # Restore MariaDB data

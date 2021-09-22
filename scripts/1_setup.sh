@@ -4,15 +4,11 @@
 # creating a ready-to-use WordPress + MariaDB + Minio environment.
 
 echo ""
-echo "••• Launching k3d, or restart if already created •••"
-k3d create || k3d start
-
-# Wait for startup
-sleep 10
+echo "••• Launching k3d •••"
+k3d cluster create --config ./scripts/k3d-config.yaml
 
 # Set kubectl context
-export KUBECONFIG="$(k3d get-kubeconfig --name='k3s-default')"
-kubectl cluster-info
+export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
 
 echo ""
 echo "••• Installing Secrets •••"
@@ -32,10 +28,10 @@ kubectl apply -k wordpress
 
 echo ""
 echo "••• Installing K8up •••"
+kubectl apply -f https://github.com/vshn/k8up/releases/download/v1.1.0/k8up-crd.yaml
 helm repo add appuio https://charts.appuio.ch
 helm repo update
-helm install appuio/k8up --generate-name --set k8up.backupImage.tag=v0.1.8-root
+helm install k8up appuio/k8up --namespace k8up-operator --create-namespace
 
 echo ""
-echo "••• Watch pods •••"
-k9s
+echo "••• Done! Use kubectl or k9s to use your cluster •••"

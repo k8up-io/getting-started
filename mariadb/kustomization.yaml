@@ -1,4 +1,5 @@
 resources:
+  - credentials.yaml
   - deployment.yaml
   - pvc.yaml
   - service.yaml

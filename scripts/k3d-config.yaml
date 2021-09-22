@@ -1,0 +1,21 @@
+# Inspired from https://k3d.io/v4.4.8/usage/configfile/
+apiVersion: k3d.io/v1alpha2
+kind: Simple
+name: k8s-tutorial
+servers: 1
+agents: 1
+kubeAPI:
+  host: "localhost"
+  hostIP: "127.0.0.1"
+  hostPort: "6445"
+image: rancher/k3s:v1.21.3-k3s1
+options:
+  k3d:
+    wait: true
+    timeout: "60s"
+  k3s:
+    extraServerArgs: []
+    extraAgentArgs: []
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true
