@@ -9,7 +9,7 @@
 :toc: left
 :data-uri:
 
-= Tutorial: Backing up Kubernetes Clusters with K8up
+= Getting Started with K8up
 
 One of the most common questions we got from companies moving to Kubernetes has always had to do with backups: how can we ensure that the information in our pods and services can be quickly and safely restored in case of problems?
 
