@@ -15,15 +15,6 @@ One of the most common questions we got from companies moving to Kubernetes has 
 
 This situation is so common that we https://vshn.ch/[VSHN] decided to tackle it with our own Kubernetes operator for backups, which we called https://k8up.io/[**K8up**].
 
-// [NOTE]
-// ====
-// This tutorial is available in three versions, each in its own branch of the https://github.com/vshn/k8up-tutorial[GitHub repository] bundled with this text:
-
-// * https://github.com/kubernetes/minikube[Minikube] in the https://github.com/vshn/k8up-tutorial[`master` branch].
-// * https://k3s.io/[k3s] in the https://github.com/vshn/k8up-tutorial/tree/k3d[`k3d` branch].
-// * https://developers.redhat.com/products/codeready-containers[Red Hat CodeReady Containers] (OpenShift 4.3) in the https://github.com/vshn/k8up-tutorial/tree/openshift[`openshift` branch].
-// ====
-
 == What is K8up?
 
 K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator distributed via a Helm chart, compatible with https://www.openshift.com/[OpenShift] and plain Kubernetes. It allows cluster operators to:
@@ -45,8 +36,6 @@ image::logo.png[]
 == Introduction
 
 This tutorial will show you how to backup a small https://k3s.io/[k3s] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
-
-// NOTE: All the scripts and YAML files are available in GitHub: https://github.com/vshn/k8up-tutorial.
 
 === Requirements
 
@@ -96,7 +85,7 @@ IMPORTANT: On some laptops, running k3d on battery power severely undermines its
 * `kubectl apply -k wordpress`
 
 . Install K8up:
-* `kubectl apply -f https://github.com/vshn/k8up/releases/download/v1.1.0/k8up-crd.yaml`
+* `kubectl apply -f https://github.com/k8up-io/k8up/releases/download/v1.2.0/k8up-crd.yaml`
 * `helm repo add appuio https://charts.appuio.ch`
 * `helm repo update`
 * `helm install k8up appuio/k8up --namespace k8up-operator --create-namespace`
@@ -332,4 +321,4 @@ When you are done with this tutorial, just execute the `k3d cluster delete k8s-t
 
 We hope that this walkthrough has given you a good overview of K8up and its capabilities. But it can do much more than that! We haven't talked about the archive, prune, and check commands, or about the backup of any data piped to `stdout` (called "Application Aware" backups.) You can check these features in the https://k8up.io/[K8up documentation website] where they are described in detail.
 
-K8up is still a work in progress, but it is already being used in production in many clusters. It is also an https://github.com/vshn/k8up[open source project], and everybody is welcome to use it freely, and even better, to contribute to it!
+K8up is still a work in progress, but it is already being used in production in many clusters. It is also an https://github.com/k8up-io/k8up[open source project], and everybody is welcome to use it freely, and even better, to contribute to it!
