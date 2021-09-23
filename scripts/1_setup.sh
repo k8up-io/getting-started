@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-# This script rebuilds the complete k3d cluster in one shot,
+# This script rebuilds the complete minikube cluster in one shot,
 # creating a ready-to-use WordPress + MariaDB + Minio environment.
 
 echo ""
-echo "••• Launching k3d •••"
-k3d cluster create --config ./scripts/k3d-config.yaml
-
-# Set kubectl context
-export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
+echo "••• Launching minikube •••"
+minikube start --nodes=2 --cpus='2' --memory='3g'
 
 echo ""
 echo "••• Installing Secrets •••"
