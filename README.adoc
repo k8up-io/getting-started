@@ -9,7 +9,7 @@
 :toc: left
 :data-uri:
 
-= Getting Started with K8up on K3s
+= Getting Started with K8up on Exoscale SKS
 
 One of the most common questions we got from companies moving to Kubernetes has always had to do with backups: how can we ensure that the information in our pods and services can be quickly and safely restored in case of problems?
 
@@ -17,10 +17,11 @@ This situation is so common that we https://vshn.ch/[VSHN] decided to tackle it 
 
 [NOTE]
 ====
-This tutorial is available in two versions, each in its own branch of this repository:
+This tutorial is available in three versions, each in its own branch of this repository:
 
 * https://k3s.io/[k3s] in the https://github.com/k8up-io/getting-started[`main` branch].
 * https://minikube.sigs.k8s.io/docs/[Minikube] in the https://github.com/k8up-io/getting-started/tree/minikube[`minikube` branch].
+* https://www.exoscale.com/sks/[Exoscale SKS] in the https://github.com/k8up-io/getting-started/tree/exoscale-sks[`exoscale-sks` branch].
 // * https://developers.redhat.com/products/codeready-containers[Red Hat CodeReady Containers] (OpenShift 4.3) in the https://github.com/vshn/k8up-tutorial/tree/openshift[`openshift` branch].
 ====
 
@@ -44,18 +45,21 @@ image::logo.png[]
 
 == Introduction
 
-This tutorial will show you how to backup a small https://k3s.io/[k3s] cluster running on your laptop. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
+This tutorial will show you how to backup an https://www.exoscale.com/sks/[Exoscale SKS] cluster. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
 
 === Requirements
 
 This tutorial has been tested in both Linux (Ubuntu 18.04) and macOS (10.15 Catalina.) Please install the following software packages before starting:
 
 * The `kubectl` command.
+* https://www.terraform.io/[Terraform].
 * The https://restic.net/[Restic] backup application.
-* The latest version of https://github.com/rancher/k3d[k3d] (4.4.8 at the time of this writing.)
+* The latest version of the https://community.exoscale.com/documentation/tools/exoscale-command-line-interface/[Exoscale CLI].
 * https://helm.sh/[Helm], required to install K8up in your cluster.
 * https://k9scli.io/[k9s] to display the contents of our clusters on the terminal.
 * https://stedolan.github.io/jq/[jq], a lightweight and flexible command-line JSON processor.
+
+IMPORTANT: You also need to https://portal.exoscale.com/login[login] to your Exoscale account (or https://portal.exoscale.com/register[register] a new one if you haven't already), and retrieve your API secret and API key!
 
 == Tutorial
 
@@ -75,12 +79,20 @@ Let's get started!
 
 NOTE: The operations of this step can be executed at once using the `scripts/1_setup.sh` script.
 
-. Start your k3d instance:
-* `k3d cluster create --config ./scripts/k3d-config.yaml`
+. Start your Exoscale SKS cluster (this step can take up to 4 minutes to complete):
+* `cd scripts && terraform apply -auto-approve`
 
-IMPORTANT: On some laptops, running k3d on battery power severely undermines its performance, and pods can take really long to start. Make sure to be plugged in to power before starting this tutorial.
+IMPORTANT: Before running this command, make sure that you have exported the `EXOSCALE_API_SECRET` and `EXOSCALE_API_KEY` corresponding to your account as environment variables.
 
 [start=2]
+. Export your `KUBECONFIG` from Exoscale:
+* `exo sks kubeconfig K8s-getting-started user -z ch-gva-2 --group system:masters > exoscale-sks.kubeconfig && cd ..`
+
+. Set the kubeconfig context:
+* `export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"`
+
+. Wait around 5 minutes for your cluster to be ready.
+
 . Copy all required secrets and passwords into the cluster:
 * `kubectl apply -k secrets`
 
@@ -221,7 +233,7 @@ To restore using Restic, set these variables (in a Unix-based system; for Window
 
 [source,bash]
 ....
-export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
+export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
 export RESTIC_REPOSITORY=s3:http://$(kubectl get services | grep minio-api | awk '{print $4}' | cut -f 1 -d ","):9000/backups/
 export RESTIC_PASSWORD=p@ssw0rd
 export AWS_ACCESS_KEY_ID=minio
@@ -321,7 +333,7 @@ TIP: Running the `watch restic snapshots` command will give you a live console w
 
 NOTE: The operations of this step can be executed at once using the `scripts/6_stop.sh` script.
 
-When you are done with this tutorial, just execute the `k3d cluster delete k8s-tutorial` command.
+When you are done with this tutorial, just execute the `terraform destroy` command.
 
 == Conclusion
 

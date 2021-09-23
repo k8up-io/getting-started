@@ -8,7 +8,7 @@
 source scripts/environment.sh
 
 # Set kubectl context
-export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
+export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
 
 # Restore WordPress PVC
 # By default, the YAML file references the latest snapshot

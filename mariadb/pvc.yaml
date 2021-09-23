@@ -9,6 +9,7 @@ spec:
   # Rancher's local path provisioner only supports the RWO access mode
   accessModes:
     - ReadWriteOnce
+  storageClassName: longhorn
   resources:
     requests:
-      storage: 10Gi
+      storage: 1Gi

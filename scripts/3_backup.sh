@@ -3,7 +3,7 @@
 # This script triggers a backup job
 
 # Set kubectl context
-export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
+export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
 
 # Trigger backup
 kubectl apply -f k8up/backup.yaml

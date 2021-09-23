@@ -1,14 +1,25 @@
 #!/usr/bin/env bash
 
-# This script rebuilds the complete k3d cluster in one shot,
+# This script rebuilds the complete SKS cluster in one shot,
 # creating a ready-to-use WordPress + MariaDB + Minio environment.
 
 echo ""
-echo "••• Launching k3d •••"
-k3d cluster create --config ./scripts/k3d-config.yaml
+echo "••• Terraforming Exoscale •••"
+cd scripts && terraform apply -auto-approve
+
+# Export Kubeconfig from Exoscale
+exo sks kubeconfig K8s-getting-started user -z ch-gva-2 --group system:masters > exoscale-sks.kubeconfig && cd ..
 
 # Set kubectl context
-export KUBECONFIG="$(k3d kubeconfig write k8s-tutorial)"
+export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
+
+echo ""
+echo "••• Waiting 5 minutes for cluster to be ready •••"
+sleep 300
+
+echo ""
+echo "••• Installing Longhorn storage controller •••"
+kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.1.1/deploy/longhorn.yaml
 
 echo ""
 echo "••• Installing Secrets •••"
