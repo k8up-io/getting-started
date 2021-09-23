@@ -9,11 +9,20 @@
 :toc: left
 :data-uri:
 
-= Getting Started with K8up
+= Getting Started with K8up on K3s
 
 One of the most common questions we got from companies moving to Kubernetes has always had to do with backups: how can we ensure that the information in our pods and services can be quickly and safely restored in case of problems?
 
 This situation is so common that we https://vshn.ch/[VSHN] decided to tackle it with our own Kubernetes operator for backups, which we called https://k8up.io/[**K8up**].
+
+[NOTE]
+====
+This tutorial is available in two versions, each in its own branch of this repository:
+
+* https://k3s.io/[k3s] in the https://github.com/k8up-io/getting-started[`main` branch].
+* https://minikube.sigs.k8s.io/docs/[Minikube] in the https://github.com/k8up-io/getting-started/tree/minikube[`minikube` branch].
+// * https://developers.redhat.com/products/codeready-containers[Red Hat CodeReady Containers] (OpenShift 4.3) in the https://github.com/vshn/k8up-tutorial/tree/openshift[`openshift` branch].
+====
 
 == What is K8up?
 
