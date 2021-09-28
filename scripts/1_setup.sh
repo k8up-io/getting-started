@@ -5,7 +5,7 @@
 
 echo ""
 echo "••• Terraforming Exoscale •••"
-cd scripts && terraform apply -auto-approve
+cd scripts && terraform init && terraform apply -auto-approve
 
 # Export Kubeconfig from Exoscale
 exo sks kubeconfig K8s-getting-started user -z ch-gva-2 --group system:masters > exoscale-sks.kubeconfig && cd ..

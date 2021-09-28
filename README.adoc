@@ -80,7 +80,7 @@ Let's get started!
 NOTE: The operations of this step can be executed at once using the `scripts/1_setup.sh` script.
 
 . Start your Exoscale SKS cluster (this step can take up to 4 minutes to complete):
-* `cd scripts && terraform apply -auto-approve`
+* `cd scripts && terraform init && terraform apply -auto-approve`
 
 IMPORTANT: Before running this command, make sure that you have exported the `EXOSCALE_API_SECRET` and `EXOSCALE_API_KEY` corresponding to your account as environment variables.
 

@@ -8,7 +8,7 @@ locals {
 resource "exoscale_sks_cluster" "K8s-getting-started" {
   zone          = local.zone
   name          = "K8s-getting-started"
-  version       = "1.21.4"
+  version       = "1.22.2"
   description   = "K8s getting started cluster"
   service_level = "pro"
   cni           = "calico"
