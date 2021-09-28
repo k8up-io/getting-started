@@ -11,11 +11,11 @@ spec:
       name: backup-repo
       key: password
     s3:
-      endpoint: http://minio-api:9000
-      bucket: backups
+      endpoint: https://sos-ch-gva-2.exo.io
+      bucket: backups-getting-started-repo
       accessKeyIDSecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: username
       secretAccessKeySecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: password

@@ -4,17 +4,17 @@ metadata:
   name: backup-test
 spec:
   keepJobs: 4
-  promURL: http://minio-api:9000
+  promURL: https://sos-ch-gva-2.exo.io
   backend:
     repoPasswordSecretRef:
       name: backup-repo
       key: password
     s3:
-      endpoint: http://minio-api:9000
-      bucket: backups
+      endpoint: https://sos-ch-gva-2.exo.io
+      bucket: backups-getting-started-repo
       accessKeyIDSecretRef:
-        name: minio-credentials
-        key: username
+        name: backup-credentials
+        key: username.txt
       secretAccessKeySecretRef:
-        name: minio-credentials
-        key: password
+        name: backup-credentials
+        key: password.txt

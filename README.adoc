@@ -36,7 +36,7 @@ K8up (pronounced "/keɪtæpp/" or simply "ketchup") is a Kubernetes operator dis
 * Perform "Application Aware" backups, containing the output of any tool capable of writing to `stdout`.
 * Check the backup repository for its integrity.
 * Prune old backups from a repository.
-* Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in Amazon S3 buckets, and Minio (used we'll see in this tutorial.)
+* Based on top of https://restic.readthedocs.io/en/latest/[Restic], it can save backups in Amazon S3 buckets, Minio, or https://www.exoscale.com/object-storage/[Exoscale Object Storage] (which we'll use in this tutorial.)
 
 K8up is written in https://golang.org/[Go] and is an open source project https://github.com/k8up-io/k8up[hosted in GitHub].
 
@@ -45,7 +45,7 @@ image::logo.png[]
 
 == Introduction
 
-This tutorial will show you how to backup an https://www.exoscale.com/sks/[Exoscale SKS] cluster. We are going to deploy https://min.io/[Minio], https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
+This tutorial will show you how to backup an https://www.exoscale.com/sks/[Exoscale SKS] cluster. We are going to deploy https://mariadb.com/[MariaDB] and https://wordpress.org/[WordPress] on this cluster, and create a blog post in our new website. Later we're going to "deface" it, so that we can safely restore it later. Through this process, you are going to learn more about K8up and its capabilities.
 
 === Requirements
 
@@ -93,11 +93,11 @@ IMPORTANT: Before running this command, make sure that you have exported the `EX
 
 . Wait around 5 minutes for your cluster to be ready.
 
-. Copy all required secrets and passwords into the cluster:
+. Create all required secrets and passwords into the cluster:
 * `kubectl apply -k secrets`
-
-. Install and run https://min.io/[Minio] in your cluster:
-* `kubectl apply -k minio`
+* `echo -n $EXOSCALE_API_KEY > ./username.txt`
+* `echo -n $EXOSCALE_API_SECRET > ./password.txt`
+* `kubectl create secret generic backup-credentials --from-file=./username.txt  --from-file=./password.txt`
 
 . Install MariaDB in your cluster:
 * `kubectl apply -k mariadb`
@@ -119,14 +119,11 @@ TIP: In `k9s` you can easily delete a pod by going to the "Pods" view (type kbd:
 image::k9s-delete.png[]
 
 [[step_2]]
-=== Viewing Minio and WordPress on a browser
+=== Viewing WordPress on a browser
 
 NOTE: The operations of this step can be executed at once using the `scripts/2_browser.sh` script.
 
 . Open WordPress in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 8080. You should see the WordPress installation wizard appearing on your browser window.
-
-. Open the Minio console in your default browser with the "EXTERNAL-IP" provided by the `kubectl get services` command, running in port 9001.
-* You can login into minio with these credentials: access key `minio`, secret key `minio123`.
 
 ==== Setting up the new blog
 
@@ -157,10 +154,10 @@ NOTE: The operations of this step can be executed at once using the `scripts/3_b
 
 To trigger a backup, use the command `kubectl apply -f k8up/backup.yaml`. You can see the job in the "Jobs" section of `k9s`.
 
-If you look at the Minio browser window, there should be now a "backups" bucket that appeared out of nowhere. That's your backup repository in Restic format!
+If you look at the Exoscale Object Storage browser window, there should be now a "backups" bucket that appeared out of nowhere. That's your backup repository in Restic format!
 
-.Minio browser showing backup repository
-image::minio-browser.png[]
+.Exoscale Object Storage browser showing backup repository
+image::exo-console.png[]
 
 ==== How does K8up work?
 
@@ -198,20 +195,20 @@ backend:
     name: backup-repo
     key: password
   s3:
-    endpoint: http://minio-api:9000
+    endpoint: https://sos-ch-gva-2.exo.io
     bucket: backups
     accessKeyIDSecretRef:
-      name: minio-credentials
+      name: backup-credentials
       key: username
     secretAccessKeySecretRef:
-      name: minio-credentials
+      name: backup-credentials
       key: password
 ....
 
 This object specifies two major keys:
 
 * `repoPasswordSecretRef` contains the reference to the secret that contains the Restic password. This is used to open, read and write to the backup repository.
-* `s3` specifies the location and credentials of the storage where the Restic backup is located. The only valid option at this moment is an AWS S3 compatible location, such as a Minio server in our case.
+* `s3` specifies the location and credentials of the storage where the Restic backup is located. The only valid option at this moment is an AWS S3 compatible location, such as the Exoscale Object Storage in our case.
 
 [[step_4]]
 === Restoring a backup
@@ -234,10 +231,10 @@ To restore using Restic, set these variables (in a Unix-based system; for Window
 [source,bash]
 ....
 export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
-export RESTIC_REPOSITORY=s3:http://$(kubectl get services | grep minio-api | awk '{print $4}' | cut -f 1 -d ","):9000/backups/
+export RESTIC_REPOSITORY=s3:https://sos-ch-gva-2.exo.io/backups-getting-started-repo/
 export RESTIC_PASSWORD=p@ssw0rd
-export AWS_ACCESS_KEY_ID=minio
-export AWS_SECRET_ACCESS_KEY=minio123
+export AWS_ACCESS_KEY_ID=$EXOSCALE_API_KEY
+export AWS_SECRET_ACCESS_KEY=$EXOSCALE_API_SECRET
 ....
 
 NOTE: You can create these variables simply running `source scripts/environment.sh`.
@@ -296,7 +293,7 @@ Instead of performing backups manually, you can also set a schedule for backups.
 backup:
   schedule: '*/2 * * * *'    # backup every 2 minutes
   keepJobs: 4
-  promURL: http://minio-api:9000
+  promURL: https://sos-ch-gva-2.exo.io
 ....
 
 TIP: Use https://crontab.guru/[crontab.guru] to help you set up complex schedule formats in `cron` syntax.
@@ -309,17 +306,17 @@ archive:
   schedule: '0 0 1 * *'       # archive every week
   restoreMethod:
     s3:
-      endpoint: http://minio-api:9000
+      endpoint: https://sos-ch-gva-2.exo.io
       bucket: archive
       accessKeyIDSecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: username
       secretAccessKeySecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: password
 check:
   schedule: '0 1 * * 1'      # monthly check
-  promURL: http://minio-api:9000
+  promURL: https://sos-ch-gva-2.exo.io
 ....
 
 Run the `kubectl apply -f k8up/schedule.yaml` command. This will setup an automatic schedule to backup the PVCs every 5 minutes (for minutes that are divisors of 5).

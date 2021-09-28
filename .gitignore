@@ -1,6 +1,8 @@
 .vscode
 backup.sql
 *.html
+username.txt
+password.txt
 
 exoscale-sks.kubeconfig
 

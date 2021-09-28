@@ -24,10 +24,11 @@ kubectl apply -f https://raw.githubusercontent.com/longhorn/longhorn/v1.1.1/depl
 echo ""
 echo "••• Installing Secrets •••"
 kubectl apply -k secrets
-
-echo ""
-echo "••• Installing Minio •••"
-kubectl apply -k minio
+echo -n $EXOSCALE_API_KEY > ./username.txt
+echo -n $EXOSCALE_API_SECRET > ./password.txt
+kubectl create secret generic backup-credentials --from-file=./username.txt  --from-file=./password.txt
+rm ./username.txt
+rm ./password.txt
 
 echo ""
 echo "••• Installing MariaDB •••"
