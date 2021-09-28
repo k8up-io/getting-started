@@ -12,10 +12,10 @@ spec:
       bucket: backups-getting-started-repo
       accessKeyIDSecretRef:
         name: minio-credentials
-        key: username
+        key: username.txt
       secretAccessKeySecretRef:
         name: minio-credentials
-        key: password
+        key: password.txt
   archive:
     schedule: '0 0 1 * *'       # archive every week
     restoreMethod:
@@ -24,10 +24,10 @@ spec:
         bucket: archive-getting-started-repo
         accessKeyIDSecretRef:
           name: backup-credentials
-          key: username
+          key: username.txt
         secretAccessKeySecretRef:
           name: backup-credentials
-          key: password
+          key: password.txt
   backup:
     schedule: '*/2 * * * *'    # backup every 2 minutes
     keepJobs: 4

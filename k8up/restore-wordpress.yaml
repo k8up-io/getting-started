@@ -15,7 +15,7 @@ spec:
       bucket: backups-getting-started-repo
       accessKeyIDSecretRef:
         name: backup-credentials
-        key: username
+        key: username.txt
       secretAccessKeySecretRef:
         name: backup-credentials
-        key: password
+        key: password.txt
