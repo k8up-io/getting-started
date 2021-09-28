@@ -11,10 +11,10 @@ spec:
       endpoint: https://sos-ch-gva-2.exo.io
       bucket: backups-getting-started-repo
       accessKeyIDSecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: username.txt
       secretAccessKeySecretRef:
-        name: minio-credentials
+        name: backup-credentials
         key: password.txt
   archive:
     schedule: '0 0 1 * *'       # archive every week
