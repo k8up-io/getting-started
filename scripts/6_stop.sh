@@ -4,9 +4,9 @@
 export KUBECONFIG="./scripts/exoscale-sks.kubeconfig"
 
 # Remove Kubernetes objects
-kubectl delete -k mariadb
-kubectl delete -k wordpress
-kubectl delete -k secrets
+kubectl delete -k wordpress --wait=false
+kubectl delete -k mariadb --wait=false
+kubectl delete -k secrets --wait=false
 
 # Remove SKS cluster
 cd scripts
