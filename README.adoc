@@ -196,19 +196,23 @@ backend:
     key: password
   s3:
     endpoint: https://sos-ch-gva-2.exo.io
-    bucket: backups
+    bucket: backups-getting-started-repo
     accessKeyIDSecretRef:
       name: backup-credentials
-      key: username
+      key: username.txt
     secretAccessKeySecretRef:
       name: backup-credentials
-      key: password
+      key: password.txt
 ....
 
 This object specifies two major keys:
 
 * `repoPasswordSecretRef` contains the reference to the secret that contains the Restic password. This is used to open, read and write to the backup repository.
-* `s3` specifies the location and credentials of the storage where the Restic backup is located. The only valid option at this moment is an AWS S3 compatible location, such as the Exoscale Object Storage in our case.
+* `s3` specifies the location and credentials of the storage where the Restic backup is located. The only valid option at this moment is an AWS S3 compatible location, such as the https://www.exoscale.com/object-storage/[Exoscale Object Storage] in our case. The bucket will be created automatically upon the first execution of the backup.
+
+IMPORTANT: The URL in this example corresponds to a bucket in the `ch-gva-2` region of Exoscale, which is the one specified in the `sks-cluster.tf` Terraform configuration file.
+
+WARNING: The name of the bucket in this example (and across all YAML and scripts in this guide) is `backups-getting-started-repo`. Beware, however, that Exoscale *requires* a unique bucket name in each zone; if this name has been taken by somebody else, remember to change it, `kubectl delete` the current backup object, and `kubectl apply` it again.
 
 [[step_4]]
 === Restoring a backup
@@ -307,13 +311,13 @@ archive:
   restoreMethod:
     s3:
       endpoint: https://sos-ch-gva-2.exo.io
-      bucket: archive
+      bucket: archive-getting-started-repo
       accessKeyIDSecretRef:
         name: backup-credentials
-        key: username
+        key: username.txt
       secretAccessKeySecretRef:
         name: backup-credentials
-        key: password
+        key: password.txt
 check:
   schedule: '0 1 * * 1'      # monthly check
   promURL: https://sos-ch-gva-2.exo.io
